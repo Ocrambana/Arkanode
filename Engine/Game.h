@@ -47,5 +47,6 @@ private:
 	/*  User Variables              */
 	float deltaTime{0.03f};
 	Ball ball;
+	RectF walls;
 	/********************************/
 };
