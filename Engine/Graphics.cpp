@@ -316,18 +316,17 @@ void Graphics::PutPixel( int x,int y,Color c )
 	pSysBuffer[Graphics::ScreenWidth * y + x] = c;
 }
 
-void Graphics::DrawCircle(int x, int y, float in_radius, Color c)
+void Graphics::DrawCircle(int x, int y, int in_radius, Color c)
 {
-	const int radius = static_cast<int>( in_radius * 10);
-	const int squareRadius = radius * radius;
+	const int radius_sq = in_radius * in_radius;
 
-	for (int j{ y - radius + 1 }; j < y + radius; j++)
-		for (int i{ x - radius + 1 }; i < x + radius; i++)
+	for (int j{ y - in_radius + 1 }; j < y + radius_sq; j++)
+		for (int i{ x - in_radius + 1 }; i < x + radius_sq; i++)
 		{
 			const int	xDiff{ x - i },
 						yDiff{ y - j };
 
-			const bool condition = (xDiff * xDiff + yDiff * yDiff <= squareRadius);
+			const bool condition = (xDiff * xDiff + yDiff * yDiff <= radius_sq);
 
 			if (condition)
 			{

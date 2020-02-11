@@ -58,8 +58,8 @@ public:
 		PutPixel( x,y,{ unsigned char( r ),unsigned char( g ),unsigned char( b ) } );
 	}
 	void PutPixel( int x,int y,Color c );
-	void DrawCircle(int x, int y, float in_radius, Color c);
-	void DrawCircle(const Vector2 &position, float radius, Color c)
+	void DrawCircle(int x, int y, int in_radius, Color c);
+	void DrawCircle(const Vector2 &position, int radius, Color c)
 	{
 		DrawCircle(static_cast<int>(position.x), static_cast<int>(position.y), radius, c);
 	}
