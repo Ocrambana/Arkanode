@@ -9,13 +9,13 @@ void Brick::Draw(Graphics & gfx) const
 {
 	if (!destroyed)
 	{
-		gfx.DrawRect(rect,color);
+		gfx.DrawRect(rect.GetExpanded(-padding),color);
 	}
 }
 
 bool Brick::DoBallcollision(Ball & ball)
 {
-	if (!destroyed && rect.IsOverlappingWith(ball.GetRect()))
+	if (!destroyed && rect.GetExpanded(-padding).IsOverlappingWith(ball.GetRect()))
 	{
 		ball.ReboundY();
 		destroyed = true;

@@ -45,12 +45,18 @@ private:
 	MainWindow& wnd;
 	Graphics gfx;
 	FrameTimer ft;
+	float deltaTime{0.03f};
 	/********************************/
 	/*  User Variables              */
-	float deltaTime{0.03f};
+	static constexpr float	brickWidth = 40.0f,
+							brickHeight = 24.0f;
+	
+	static constexpr int	nBricksAcross = 18,
+							nBricksDown = 4,
+							nBricks = nBricksAcross * nBricksDown;
 	Ball ball;
 	RectF walls;
-	Brick brick;
+	Brick bricks[nBricks];
 	Paddle paddle;
 	/********************************/
 };

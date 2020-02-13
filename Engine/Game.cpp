@@ -21,16 +21,30 @@
 #include "MainWindow.h"
 #include "Game.h"
 #include "Vector2.h"
+#include <algorithm>
 
 Game::Game( MainWindow& wnd )
 	:
 	wnd( wnd ),
 	gfx( wnd ),
-	ball(Vector2(300.0f, 300.0f), Vector2(100.0f,100.0f)),
+	ball(Vector2(300.0f, 300.0f), Vector2(200.0f,200.0f)),
 	walls(0.0f, float(gfx.ScreenWidth),0.0f, float(gfx.ScreenHeight) ),
-	brick(RectF(450.0f, 550.0f,485.0f,515.0f), Colors::Red),
 	paddle(Vector2(400.0f,580.0f),30.0f,10.0f)
-{}
+{
+	const Color colors[4] = {Colors::Red, Colors::Green, Colors::Cyan, Colors::Yellow};
+	const Vector2 topLeft(40.0f, 40.0f);
+	
+	for (int j{ 0 }; j < nBricksDown; j++)
+	{
+		const Color c = colors[j];
+		
+		for (int i{ 0 }; i < nBricksAcross; i++)
+		{
+			const RectF rect(topLeft + Vector2(i*brickWidth, j*brickHeight), brickWidth, brickHeight);
+			bricks[j * nBricksAcross + i] = Brick(rect, c);			
+		} 
+	}
+}
 
 void Game::Go()
 {
@@ -45,7 +59,16 @@ void Game::UpdateModel()
 {
 	ball.Update(deltaTime);
 	ball.DoWallCollision(walls);
-	brick.DoBallcollision(ball);
+	
+	for (Brick& b : bricks)
+	{
+		if (b.DoBallcollision(ball))
+		{
+			//TODO sound
+			break;
+		}
+	}
+
 	paddle.Update(deltaTime, wnd.kbd);
 	paddle.DoWallCollision(walls);
 	paddle.DoBallCollision(ball);
@@ -54,6 +77,6 @@ void Game::UpdateModel()
 void Game::ComposeFrame()
 {
 	ball.Draw(gfx);
-	brick.Draw(gfx);
+	std::for_each(std::begin(bricks), std::end(bricks), [this](Brick &b) {b.Draw(this->gfx); });
 	paddle.Draw(gfx);
 }
