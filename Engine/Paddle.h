@@ -17,7 +17,9 @@ public:
 	void DoWallCollision(const RectF& walls);
 	RectF GetRect() const;
 private:
-	Color color = Colors::White;
+	static constexpr float wingWidth = 10.0f;
+	Color	color = Colors::White,
+			wingColor = Colors::Red;
 	float	halfWidth,
 			halfHeight,
 			speed{ 300.0f };
