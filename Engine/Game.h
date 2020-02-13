@@ -25,6 +25,8 @@
 #include "Graphics.h"
 #include "FrameTimer.h"
 #include "Ball.h"
+#include "Brick.h"
+#include "Paddle.h"
 
 class Game
 {
@@ -48,5 +50,7 @@ private:
 	float deltaTime{0.03f};
 	Ball ball;
 	RectF walls;
+	Brick brick;
+	Paddle paddle;
 	/********************************/
 };

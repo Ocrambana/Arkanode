@@ -21,17 +21,16 @@
 #include "MainWindow.h"
 #include "Game.h"
 #include "Vector2.h"
-#include "Brick.h"
-
 
 Game::Game( MainWindow& wnd )
 	:
 	wnd( wnd ),
 	gfx( wnd ),
 	ball(Vector2(300.0f, 300.0f), Vector2(100.0f,100.0f)),
-	walls(0.0f, float(gfx.ScreenWidth),0.0f, float(gfx.ScreenHeight) )
-{
-}
+	walls(0.0f, float(gfx.ScreenWidth),0.0f, float(gfx.ScreenHeight) ),
+	brick(RectF(450.0f, 550.0f,485.0f,515.0f), Colors::Red),
+	paddle(Vector2(400.0f,580.0f),30.0f,10.0f)
+{}
 
 void Game::Go()
 {
@@ -46,9 +45,15 @@ void Game::UpdateModel()
 {
 	ball.Update(deltaTime);
 	ball.DoWallCollision(walls);
+	brick.DoBallcollision(ball);
+	paddle.Update(deltaTime, wnd.kbd);
+	paddle.DoWallCollision(walls);
+	paddle.DoBallCollision(ball);
 }
 
 void Game::ComposeFrame()
 {
 	ball.Draw(gfx);
+	brick.Draw(gfx);
+	paddle.Draw(gfx);
 }
