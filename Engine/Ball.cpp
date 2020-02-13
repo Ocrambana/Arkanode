@@ -65,3 +65,8 @@ RectF Ball::GetRect() const
 {
 	return RectF::FromCenter(pos, radius * 10, radius * 10);
 }
+
+Vector2 Ball::GetVelocity() const
+{
+	return vel;
+}
