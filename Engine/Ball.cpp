@@ -70,3 +70,8 @@ Vector2 Ball::GetVelocity() const
 {
 	return vel;
 }
+
+Vector2 Ball::GetPosition() const
+{
+	return pos;
+}
