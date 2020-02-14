@@ -32,3 +32,10 @@ RectF RectF::GetExpanded(float offset) const
 {
 	return RectF(left - offset, right + offset, top - offset, bottom + offset);
 }
+
+Vector2 RectF::GetCenter() const
+{
+	const float xVal{ (left + right) / 2 },
+		yVal{ (top + bottom) / 2 };
+	return Vector2(xVal, yVal);
+}

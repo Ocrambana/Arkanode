@@ -60,18 +60,45 @@ void Game::UpdateModel()
 	ball.Update(deltaTime);
 	ball.DoWallCollision(walls);
 	
-	for (Brick& b : bricks)
-	{
-		if (b.DoBallcollision(ball))
-		{
-			//TODO sound
-			break;
-		}
-	}
+	DoBricksCollision();
 
 	paddle.Update(deltaTime, wnd.kbd);
 	paddle.DoWallCollision(walls);
 	paddle.DoBallCollision(ball);
+}
+
+void Game::DoBricksCollision()
+{
+	bool isCollisionHappened{ false };
+	float currentCollisionDistanceSquared;
+	int currentCollisionIndex;
+	for (int i{ 0 }; i < nBricks; i++)
+	{
+		if (bricks[i].CheckBallCollision(ball))
+		{
+			const float newCollisionDistance = (bricks[i].GetCenter() - ball.GetPosition()).GetSquareMagnitude();
+
+			if (isCollisionHappened)
+			{
+				if (currentCollisionDistanceSquared > newCollisionDistance)
+				{
+					currentCollisionDistanceSquared = newCollisionDistance;
+					currentCollisionIndex = i;
+				}
+			}
+			else
+			{
+				currentCollisionDistanceSquared = newCollisionDistance;
+				currentCollisionIndex = i;
+				isCollisionHappened = true;
+			}
+		}
+	}
+
+	if (isCollisionHappened)
+	{
+		bricks[currentCollisionIndex].ExecuteBallcollision(ball);
+	}
 }
 
 void Game::ComposeFrame()

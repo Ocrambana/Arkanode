@@ -38,6 +38,7 @@ public:
 private:
 	void ComposeFrame();
 	void UpdateModel();
+	void DoBricksCollision();
 	/********************************/
 	/*  User Functions              */
 	/********************************/
