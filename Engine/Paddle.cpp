@@ -28,8 +28,11 @@ void Paddle::Update(float dt, const Keyboard& kbd)
 	}
 }
 
-bool Paddle::DoBallCollision(Ball & ball) const
+bool Paddle::DoBallCollision(Ball & ball)
 {
+	if (isCooldown) 
+		return false;
+
 	const RectF rect = GetRect();
 	if (rect.IsOverlappingWith(ball.GetRect()))
 	{
@@ -46,8 +49,10 @@ bool Paddle::DoBallCollision(Ball & ball) const
 		{
 			ball.ReboundX();
 		}
+		isCooldown = true;
 		return true;
 	}
+
 	return false;
 }
 
@@ -71,4 +76,9 @@ void Paddle::DoWallCollision(const RectF & walls)
 RectF Paddle::GetRect() const
 {
 	return RectF::FromCenter(pos, halfWidth, halfHeight);
+}
+
+void Paddle::ResetCooldown()
+{
+	isCooldown = false;
 }

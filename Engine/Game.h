@@ -37,7 +37,7 @@ public:
 	void Go();
 private:
 	void ComposeFrame();
-	void UpdateModel();
+	void UpdateModel(float deltaTime);
 	void DoBricksCollision();
 	/********************************/
 	/*  User Functions              */
@@ -46,7 +46,6 @@ private:
 	MainWindow& wnd;
 	Graphics gfx;
 	FrameTimer ft;
-	float deltaTime{0.03f};
 	/********************************/
 	/*  User Variables              */
 	static constexpr float	brickWidth = 40.0f,
