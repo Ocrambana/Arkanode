@@ -10,13 +10,18 @@
 class Paddle
 {
 public:
-	Paddle(const Vector2 &pos_in, float halfWidth_in, float halfHeight_in);
-	void Draw(Graphics& gfx);
+	Paddle(const Vector2 &pos_in, float halfWidth_in, float halfHeight_in, int lives);
+	void Draw(Graphics& gfx) const;
 	void Update(float dt, const Keyboard& kbd);
 	bool DoBallCollision(Ball& ball);
 	void DoWallCollision(const RectF& walls);
 	RectF GetRect() const;
 	void ResetCooldown();
+	void LoseLife();
+	bool IsGameOver() const;
+	void DrawLifes(Vector2 bottomLeft ,Graphics &gfx) const;
+private:
+	void DrawPaddle(RectF rect, float scale, Graphics& gfx) const;
 private:
 	static constexpr float wingWidth = 10.0f;
 	Color	color = Colors::White,
@@ -26,5 +31,6 @@ private:
 			speed{ 300.0f };
 	Vector2 pos;
 	bool isCooldown = false;
+	int lifes;
 };
 

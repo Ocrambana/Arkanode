@@ -2,6 +2,7 @@
 
 #include "Vector2.h"
 #include "Graphics.h"
+enum CollisionResult {none, normal, bottom};
 
 class Ball
 {
@@ -11,7 +12,7 @@ public:
 
 	void Draw(Graphics &gfx) const;
 	void Update(float deltaTime);
-	bool DoWallCollision(const RectF& walls);
+	CollisionResult DoWallCollision(const RectF& walls);
 	void ReboundX();
 	void ReboundY();
 	RectF GetRect() const;
@@ -21,5 +22,6 @@ private:
 	static constexpr float radius = 0.7f;
 	Vector2 pos,
 			vel;
+	bool hasCollidedWithFloor = false;
 };
 

@@ -28,8 +28,8 @@ Game::Game( MainWindow& wnd )
 	wnd( wnd ),
 	gfx( wnd ),
 	ball(Vector2(300.0f, 300.0f), Vector2(200.0f,200.0f)),
-	walls(0.0f, float(gfx.ScreenWidth),0.0f, float(gfx.ScreenHeight) ),
-	paddle(Vector2(400.0f,580.0f),30.0f,10.0f)
+	walls(10.0f, 790.0f, 10.0f, 590.0f ),
+	paddle(Vector2(400.0f,560.0f),30.0f,10.0f, 3)
 {
 	const Color colors[4] = {Colors::Red, Colors::Green, Colors::Cyan, Colors::Yellow};
 	const Vector2 topLeft(40.0f, 40.0f);
@@ -64,18 +64,32 @@ void Game::Go()
 
 void Game::UpdateModel(float deltaTime)
 {
-	ball.Update(deltaTime);
-
-	if (ball.DoWallCollision(walls))
+	if (isGameOver)
 	{
-		paddle.ResetCooldown();
-	}
-	
-	DoBricksCollision();
 
-	paddle.Update(deltaTime, wnd.kbd);
-	paddle.DoWallCollision(walls);
-	paddle.DoBallCollision(ball);
+	}
+	else
+	{
+		ball.Update(deltaTime);
+		CollisionResult res = ball.DoWallCollision(walls);
+
+		if (res != none)
+		{
+			paddle.ResetCooldown();
+		}
+	
+		if (res == bottom)
+		{
+			paddle.LoseLife();
+			isGameOver = paddle.IsGameOver();
+		}
+
+		DoBricksCollision();
+
+		paddle.Update(deltaTime, wnd.kbd);
+		paddle.DoWallCollision(walls);
+		paddle.DoBallCollision(ball);
+	}
 }
 
 void Game::DoBricksCollision()
@@ -113,9 +127,28 @@ void Game::DoBricksCollision()
 	}
 }
 
+void Game::DrawWalls()
+{
+	const RectF border = walls.GetExpanded(5.0f);
+
+	for (int j = static_cast<int>(border.top); j <= border.bottom; j++)
+		for (int i = static_cast<int>(border.left); i <= border.right; i++)
+		{
+			const bool condition = (i < walls.left || i > walls.right) || (j > walls.bottom || j < walls.top);
+
+			if (condition)
+			{
+				gfx.PutPixel(i, j, Colors::White);
+			}
+		}
+}
+
 void Game::ComposeFrame()
 {
+	DrawWalls();
 	ball.Draw(gfx);
 	std::for_each(std::begin(bricks), std::end(bricks), [this](Brick &b) {b.Draw(this->gfx); });
 	paddle.Draw(gfx);
+	const Vector2 bottomLeft(walls.left, walls.bottom - 10);
+	paddle.DrawLifes(bottomLeft, gfx);
 }

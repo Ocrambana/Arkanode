@@ -17,38 +17,39 @@ void Ball::Update(float deltaTime)
 	pos += vel * deltaTime;
 }
 
-bool Ball::DoWallCollision(const RectF & walls)
+CollisionResult Ball::DoWallCollision(const RectF & walls)
 {
-	bool collided{ false };
+	CollisionResult result = none;
 	const RectF rect = GetRect();
 	
 	if (rect.left < walls.left) 
 	{
 		pos.x += walls.left - rect.left;
 		ReboundX();
-		collided = true;
+		result = normal;
 	}
 	else if (rect.right > walls.right)
 	{
 		pos.x -= rect.right - walls.right;
 		ReboundX();
-		collided = true;
+		result = normal;
 	}
 
 	if (rect.top < walls.top) 
 	{
 		pos.y += walls.top - rect.top;
 		ReboundY();
-		collided = true;
+		result = normal;
 	}
 	else if (rect.bottom > walls.bottom)
 	{
 		pos.y -= rect.bottom - walls.bottom;
 		ReboundY();
-		collided = true;
+		result = bottom;
+		hasCollidedWithFloor = true;
 	}
 
-	return  collided;
+	return  result;
 }
 
 void Ball::ReboundX()

@@ -41,6 +41,7 @@ private:
 	void DoBricksCollision();
 	/********************************/
 	/*  User Functions              */
+	void DrawWalls();
 	/********************************/
 private:
 	MainWindow& wnd;
@@ -58,5 +59,6 @@ private:
 	RectF walls;
 	Brick bricks[nBricks];
 	Paddle paddle;
+	bool isGameOver = false;
 	/********************************/
 };
