@@ -18,7 +18,7 @@ public:
 	RectF GetRect() const;
 	void ResetCooldown();
 	void LoseLife();
-	bool IsGameOver() const;
+	bool hasFinishedLifes() const;
 	void DrawLifes(Vector2 bottomLeft ,Graphics &gfx) const;
 
 private:

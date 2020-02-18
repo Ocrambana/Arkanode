@@ -13,7 +13,11 @@ Paddle::Paddle(const Vector2 & pos_in, float halfWidth_in, float halfHeight_in, 
 
 void Paddle::Draw(Graphics & gfx) const
 {
-	DrawPaddle(GetRect(), 1.0f, gfx);
+	RectF rect = GetRect();
+	gfx.DrawRect(rect, wingColor);
+	rect.left += wingWidth;
+	rect.right -= wingWidth;
+	gfx.DrawRect(rect, color);
 }
 
 void Paddle::Update(float dt, const Keyboard& kbd)
@@ -38,7 +42,7 @@ bool Paddle::DoBallCollision(Ball & ball)
 	{
 		const Vector2 ballPos = ball.GetPosition();
 		const bool hasToReboundY =	std::signbit(ball.GetVelocity().x) == std::signbit((ballPos - pos).x) ||
-								(ballPos.x > rect.left && ballPos.x < rect.right);
+								(ballPos.x >= rect.left && ballPos.x <= rect.right);
 		if (hasToReboundY)
 		{
 			Vector2 direction;
@@ -51,7 +55,7 @@ bool Paddle::DoBallCollision(Ball & ball)
 				}
 				else
 				{
-					direction = Vector2(fixedZoneExitX, 1.0f);
+					direction = Vector2(fixedZoneExitX, -1.0f);
 				}
 			}
 			else
@@ -103,7 +107,7 @@ void Paddle::LoseLife()
 	lifes--;
 }
 
-bool Paddle::IsGameOver() const
+bool Paddle::hasFinishedLifes() const
 {
 	return lifes == 0;
 }
