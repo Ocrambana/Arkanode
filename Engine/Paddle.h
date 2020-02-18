@@ -20,15 +20,24 @@ public:
 	void LoseLife();
 	bool IsGameOver() const;
 	void DrawLifes(Vector2 bottomLeft ,Graphics &gfx) const;
+
 private:
 	void DrawPaddle(RectF rect, float scale, Graphics& gfx) const;
+
 private:
-	static constexpr float wingWidth = 10.0f;
-	Color	color = Colors::White,
-			wingColor = Colors::Red;
+	static constexpr float	wingWidth = 5.0f,
+							exitFactor = 0.045f,
+							speed = 300.0f,
+							maximumExitRatio = 2.6f,
+							fixedZoneWidthRatio = 0.2f;
+
+	static constexpr Color	color = Colors::White,
+							wingColor = Colors::Red;
 	float	halfWidth,
 			halfHeight,
-			speed{ 300.0f };
+			exitXFactor,
+			fixedZoneHalfWitdth,
+			fixedZoneExitX;
 	Vector2 pos;
 	bool isCooldown = false;
 	int lifes;

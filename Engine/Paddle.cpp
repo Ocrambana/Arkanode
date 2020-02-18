@@ -5,6 +5,9 @@ Paddle::Paddle(const Vector2 & pos_in, float halfWidth_in, float halfHeight_in, 
 	pos{pos_in},
 	halfWidth{halfWidth_in},
 	halfHeight{halfHeight_in},
+	exitXFactor(maximumExitRatio / halfWidth),
+	fixedZoneHalfWitdth(halfWidth * fixedZoneWidthRatio),
+	fixedZoneExitX(fixedZoneHalfWitdth * exitXFactor),
 	lifes{lives}
 {}
 
@@ -34,13 +37,28 @@ bool Paddle::DoBallCollision(Ball & ball)
 	if (rect.IsOverlappingWith(ball.GetRect()))
 	{
 		const Vector2 ballPos = ball.GetPosition();
-		if (std::signbit(ball.GetVelocity().x) == std::signbit((ballPos - pos).x))
+		const bool hasToReboundY =	std::signbit(ball.GetVelocity().x) == std::signbit((ballPos - pos).x) ||
+								(ballPos.x > rect.left && ballPos.x < rect.right);
+		if (hasToReboundY)
 		{
-			ball.ReboundY();
-		}
-		else if (ballPos.x > rect.left && ballPos.x < rect.right)
-		{
-			ball.ReboundY();
+			Vector2 direction;
+			const float xDifference = ballPos.x - pos.x;
+			if (std::abs(xDifference) < fixedZoneHalfWitdth)
+			{
+				if (xDifference < 0.0f)
+				{
+					direction = Vector2(-fixedZoneExitX,-1.0f);
+				}
+				else
+				{
+					direction = Vector2(fixedZoneExitX, 1.0f);
+				}
+			}
+			else
+			{
+				direction = Vector2(xDifference * exitFactor, -1.0f);
+			}
+			ball.SetDirection(direction);
 		}
 		else
 		{
@@ -118,9 +136,9 @@ void Paddle::DrawPaddle(RectF rect, float scale, Graphics & gfx) const
 
 	const float yCenter = rect.GetCenter().y;
 	const Vector2 leftWingCenter(rect.left, yCenter);
-	gfx.DrawCircle(leftWingCenter, wingWidth / scale, wingColor);
+	gfx.DrawCircle(leftWingCenter,static_cast<int>( wingWidth / scale), wingColor);
 	const Vector2 rightWingCenter(rect.right, yCenter);
-	gfx.DrawCircle(rightWingCenter, wingWidth / scale, wingColor);
+	gfx.DrawCircle(rightWingCenter, static_cast<int>(wingWidth / scale), wingColor);
 
 	gfx.DrawRect(rect, color);
 }

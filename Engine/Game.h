@@ -52,9 +52,10 @@ private:
 	static constexpr float	brickWidth = 40.0f,
 							brickHeight = 24.0f;
 	
-	static constexpr int	nBricksAcross = 18,
+	static constexpr int	nBricksAcross = 13,
 							nBricksDown = 4,
-							nBricks = nBricksAcross * nBricksDown;
+							nBricks = nBricksAcross * nBricksDown,
+							wallsBorder = 5;
 	Ball ball;
 	RectF walls;
 	Brick bricks[nBricks];

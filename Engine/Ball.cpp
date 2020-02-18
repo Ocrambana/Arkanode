@@ -2,10 +2,12 @@
 
 #include "SpriteCodex.h"
 
-Ball::Ball(Vector2 & initialPosition, Vector2 & initialSpeed)
+Ball::Ball( const Vector2 & initialPosition, Vector2 & dir_in)
 	:
-	pos{initialPosition}, vel{initialSpeed}
-{}
+	pos{initialPosition}
+{
+	SetDirection(dir_in);
+}
 
 void Ball::Draw(Graphics &gfx) const
 {
@@ -75,4 +77,9 @@ Vector2 Ball::GetVelocity() const
 Vector2 Ball::GetPosition() const
 {
 	return pos;
+}
+
+void Ball::SetDirection(const Vector2 & dir)
+{
+	vel = dir.GetNormalized() * speed;
 }

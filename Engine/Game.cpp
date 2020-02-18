@@ -27,12 +27,12 @@ Game::Game( MainWindow& wnd )
 	:
 	wnd( wnd ),
 	gfx( wnd ),
-	ball(Vector2(300.0f, 300.0f), Vector2(200.0f,200.0f)),
-	walls(10.0f, 790.0f, 10.0f, 590.0f ),
-	paddle(Vector2(400.0f,560.0f),30.0f,10.0f, 3)
+	ball(Vector2(300.0f, 300.0f), Vector2(-1.0f, -1.0f)),
+	walls(100.0f, 700.0f, 0.0f + wallsBorder, float(Graphics::ScreenHeight) - wallsBorder),
+	paddle(Vector2(400.0f,560.0f),30.0f,5.0f, 3)
 {
 	const Color colors[4] = {Colors::Red, Colors::Green, Colors::Cyan, Colors::Yellow};
-	const Vector2 topLeft(40.0f, 40.0f);
+	const Vector2 topLeft(walls.left + 40.0f, walls.top + 40.0f);
 	
 	for (int j{ 0 }; j < nBricksDown; j++)
 	{
@@ -129,12 +129,13 @@ void Game::DoBricksCollision()
 
 void Game::DrawWalls()
 {
-	const RectF border = walls.GetExpanded(5.0f);
+	const RectF border = walls.GetExpanded(static_cast<float>(wallsBorder));
 
 	for (int j = static_cast<int>(border.top); j <= border.bottom; j++)
 		for (int i = static_cast<int>(border.left); i <= border.right; i++)
 		{
-			const bool condition = (i < walls.left || i > walls.right) || (j > walls.bottom || j < walls.top);
+			const bool condition = (i < walls.left || i > walls.right || j > walls.bottom || j < walls.top) &&
+									i < Graphics::ScreenWidth && i > 0 && j > 0 && j < Graphics::ScreenHeight;
 
 			if (condition)
 			{
@@ -145,10 +146,18 @@ void Game::DrawWalls()
 
 void Game::ComposeFrame()
 {
+	if (isGameOver)
+	{
+
+	}
+	else
+	{
+		ball.Draw(gfx);
+		paddle.Draw(gfx);
+		const Vector2 bottomLeft(5.0f, 15.0f);
+		paddle.DrawLifes(bottomLeft, gfx);
+	}
+
 	DrawWalls();
-	ball.Draw(gfx);
 	std::for_each(std::begin(bricks), std::end(bricks), [this](Brick &b) {b.Draw(this->gfx); });
-	paddle.Draw(gfx);
-	const Vector2 bottomLeft(walls.left, walls.bottom - 10);
-	paddle.DrawLifes(bottomLeft, gfx);
 }
