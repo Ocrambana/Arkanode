@@ -73,6 +73,7 @@ public:
 	void DrawIsoRightTriUR(int x, int y, int size, Color c);
 	void DrawIsoRightTriBL(int x, int y, int size, Color c);
 	void DrawIsoRightTriBR(int x, int y, int size, Color c);
+	static RectF GetScreenRect();
 	~Graphics();
 private:
 	Microsoft::WRL::ComPtr<IDXGISwapChain>				pSwapChain;

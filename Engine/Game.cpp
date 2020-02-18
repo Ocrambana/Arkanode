@@ -28,11 +28,12 @@ Game::Game( MainWindow& wnd )
 	wnd( wnd ),
 	gfx( wnd ),
 	ball(Vector2(300.0f, 300.0f), Vector2(-1.0f, -1.0f)),
-	walls(100.0f, 700.0f, 0.0f + wallsBorder, float(Graphics::ScreenHeight) - wallsBorder),
+	walls(RectF::FromCenter(Graphics::GetScreenRect().GetCenter(), fieldWidth / 2.0f, fieldHeight / 2.0f),
+		wallThickness, wallColor),
 	paddle(Vector2(400.0f,560.0f),30.0f,5.0f, 3)
 {
 	const Color colors[4] = {Colors::Red, Colors::Green, Colors::Cyan, Colors::Yellow};
-	const Vector2 topLeft(walls.left + 40.0f, walls.top + 40.0f);
+	const Vector2 topLeft(walls.GetInnerBounds().left, walls.GetInnerBounds().top + 40.0f);
 	
 	for (int j{ 0 }; j < nBricksDown; j++)
 	{
@@ -71,7 +72,7 @@ void Game::UpdateModel(float deltaTime)
 	else
 	{
 		ball.Update(deltaTime);
-		CollisionResult res = ball.DoWallCollision(walls);
+		CollisionResult res = ball.DoWallCollision(walls.GetInnerBounds());
 
 		if (res != none)
 		{
@@ -87,7 +88,7 @@ void Game::UpdateModel(float deltaTime)
 		DoBricksCollision();
 
 		paddle.Update(deltaTime, wnd.kbd);
-		paddle.DoWallCollision(walls);
+		paddle.DoWallCollision(walls.GetInnerBounds());
 		paddle.DoBallCollision(ball);
 	}
 }
@@ -129,13 +130,13 @@ void Game::DoBricksCollision()
 
 void Game::DrawWalls()
 {
-	const RectF border = walls.GetExpanded(static_cast<float>(wallsBorder));
+	const RectF wallsRect = walls.GetInnerBounds(),
+			border = wallsRect.GetExpanded(static_cast<float>(wallsBorder));
 
 	for (int j = static_cast<int>(border.top); j <= border.bottom; j++)
 		for (int i = static_cast<int>(border.left); i <= border.right; i++)
 		{
-			const bool condition = (i < walls.left || i > walls.right || j > walls.bottom || j < walls.top) &&
-									i < Graphics::ScreenWidth && i > 0 && j > 0 && j < Graphics::ScreenHeight;
+			const bool condition = (i < wallsRect.left || i > wallsRect.right || j > wallsRect.bottom || j < wallsRect.top);
 
 			if (condition)
 			{

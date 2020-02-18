@@ -289,6 +289,11 @@ void Graphics::DrawIsoRightTriBR(int x, int y, int size, Color c)
 	}
 }
 
+RectF Graphics::GetScreenRect()
+{
+	return RectF(0.0f, static_cast<float>(Graphics::ScreenWidth), 0.0f, static_cast<float>( Graphics::ScreenHeight));
+}
+
 Graphics::~Graphics()
 {
 	// free sysbuffer memory (aligned free)

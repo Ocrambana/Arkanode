@@ -27,6 +27,7 @@
 #include "Ball.h"
 #include "Brick.h"
 #include "Paddle.h"
+#include "Walls.h"
 
 class Game
 {
@@ -49,15 +50,21 @@ private:
 	FrameTimer ft;
 	/********************************/
 	/*  User Variables              */
-	static constexpr float	brickWidth = 40.0f,
-							brickHeight = 24.0f;
-	
 	static constexpr int	nBricksAcross = 13,
 							nBricksDown = 4,
 							nBricks = nBricksAcross * nBricksDown,
 							wallsBorder = 5;
+	
+	static constexpr float	brickWidth = 40.0f,
+							brickHeight = 22.0f,
+							wallThickness = 12.0f,
+							fieldWidth = float(nBricksAcross) * brickWidth,
+							fieldHeight = float(Graphics::ScreenHeight) - wallThickness * 2.0f;
+	
+	static constexpr Color wallColor = { 20,60,200 };
+
 	Ball ball;
-	RectF walls;
+	Walls walls;
 	Brick bricks[nBricks];
 	Paddle paddle;
 	bool isGameOver = false;
