@@ -3,14 +3,16 @@
 
 Brick::Brick(const RectF & inRect, Color inColor)
 	:
-	rect{inRect}, color{inColor}
+	rect{inRect}, 
+	beveler{inColor},
+	destroyed(false)
 {}
 
 void Brick::Draw(Graphics & gfx) const
 {
 	if (!destroyed)
 	{
-		gfx.DrawRect(rect.GetExpanded(-padding),color);
+		beveler.DrawBeveledBrick(rect.GetExpanded(-padding),bevelSize, gfx);
 	}
 }
 
