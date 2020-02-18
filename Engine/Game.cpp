@@ -71,7 +71,7 @@ void Game::UpdateModel(float deltaTime)
 	{
 		if (wnd.kbd.KeyIsPressed(VK_RETURN) || wnd.kbd.KeyIsPressed(VK_CONTROL))
 		{
-			gameState = Running;
+			gameState = Reset;
 		}
 	}
 	else if (gameState == Running)
