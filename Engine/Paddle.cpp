@@ -1,14 +1,13 @@
 #include "Paddle.h"
 
-Paddle::Paddle(const Vector2 & pos_in, float halfWidth_in, float halfHeight_in, int lives)
+Paddle::Paddle(const Vector2 & pos_in, float halfWidth_in, float halfHeight_in)
 	:
 	pos{pos_in},
 	halfWidth{halfWidth_in},
 	halfHeight{halfHeight_in},
 	exitXFactor(maximumExitRatio / halfWidth),
 	fixedZoneHalfWitdth(halfWidth * fixedZoneWidthRatio),
-	fixedZoneExitX(fixedZoneHalfWitdth * exitXFactor),
-	lifes{lives}
+	fixedZoneExitX(fixedZoneHalfWitdth * exitXFactor)
 {}
 
 void Paddle::Draw(Graphics & gfx) const
@@ -102,47 +101,7 @@ void Paddle::ResetCooldown()
 	isCooldown = false;
 }
 
-void Paddle::LoseLife()
+void Paddle::SetPosition(const Vector2 & pos)
 {
-	lifes--;
-}
-
-bool Paddle::hasFinishedLifes() const
-{
-	return lifes == 0;
-}
-
-void Paddle::DrawLifes(Vector2 bottomLeft, Graphics & gfx) const
-{
-	const float lifeScale = 3;
-	const int padding = 2;
-	const RectF rect = GetRect();
-	const float width = (rect.right - rect.left) / lifeScale,
-				height = (rect.bottom - rect.top) / lifeScale;
-	bottomLeft.x += padding * 2;
-	RectF lifeRect(bottomLeft, width, height);
-
-	for (int i{ 0 }; i < lifes; i++)
-	{
-		DrawPaddle(lifeRect, lifeScale, gfx);
-		lifeRect.left = lifeRect.right + padding;
-		lifeRect.right += padding + width;
-	}
-}
-
-void Paddle::DrawPaddle(RectF rect, float scale, Graphics & gfx) const
-{
-	if (scale < 0.0001f)
-		scale = 0.0001f;
-
-	rect.left += wingWidth / scale;
-	rect.right -= wingWidth / scale;
-
-	const float yCenter = rect.GetCenter().y;
-	const Vector2 leftWingCenter(rect.left, yCenter);
-	gfx.DrawCircle(leftWingCenter,static_cast<int>( wingWidth / scale), wingColor);
-	const Vector2 rightWingCenter(rect.right, yCenter);
-	gfx.DrawCircle(rightWingCenter, static_cast<int>(wingWidth / scale), wingColor);
-
-	gfx.DrawRect(rect, color);
+	this->pos = pos;
 }
