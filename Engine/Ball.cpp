@@ -83,3 +83,8 @@ void Ball::SetDirection(const Vector2 & dir)
 {
 	vel = dir.GetNormalized() * speed;
 }
+
+void Ball::SetPosition(const Vector2 & pos)
+{
+	this->pos = pos;
+}

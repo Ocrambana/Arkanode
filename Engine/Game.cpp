@@ -31,7 +31,8 @@ Game::Game( MainWindow& wnd )
 	ball(Graphics::GetScreenRect().GetCenter(), Vector2(-0.5f, -1.0f)),
 	walls(RectF::FromCenter(Graphics::GetScreenRect().GetCenter(), fieldWidth / 2.0f, fieldHeight / 2.0f),
 		wallThickness, wallColor),
-	paddle(Vector2(400.0f,560.0f),30.0f,5.0f, 3)
+	paddle(Vector2(400.0f,560.0f),30.0f,5.0f),
+	lives(Vector2(5.0f,5.0f),3)
 {
 	const Color colors[4] = { {230,0,0},{ 0,230,0 },{ 0,0,230 },{ 0,230,230 } };
 	const Vector2 topLeft(walls.GetInnerBounds().left, walls.GetInnerBounds().top + 40.0f);
@@ -85,10 +86,13 @@ void Game::UpdateModel(float deltaTime)
 	
 		if (res == bottom)
 		{
-			paddle.LoseLife();
-			if (paddle.hasFinishedLifes())
+			if (!lives.ConsumeLife())
 			{
 				gameState = GameOver;
+			}
+			else
+			{
+				gameState = Reset;
 			}
 		}
 
@@ -103,6 +107,18 @@ void Game::UpdateModel(float deltaTime)
 		if (wnd.kbd.KeyIsPressed(VK_RETURN))
 		{
 			gameState = Running;
+		}
+	}
+	else if (gameState == Reset)
+	{
+		resetTime += deltaTime;
+		if (resetTime > cooldownTime)
+		{
+			gameState = Running;
+			resetTime = 0.0f;
+			ball.SetPosition(Graphics::GetScreenRect().GetCenter());
+			ball.SetDirection(Vector2(-0.5f, -1.0f));
+			paddle.SetPosition(Vector2(400.0f, 560.0f));
 		}
 	}
 }
@@ -146,7 +162,7 @@ void Game::ComposeFrame()
 {
 	if (gameState == Starting)
 	{
-		SpriteCodex::DrawTitle(Graphics::GetScreenRect().GetCenter() ,gfx);
+		SpriteCodex::DrawTitle(Graphics::GetScreenRect().GetCenter(), gfx);
 	}
 	else
 	{
@@ -159,7 +175,11 @@ void Game::ComposeFrame()
 			ball.Draw(gfx);
 			paddle.Draw(gfx);
 			const Vector2 bottomLeft(5.0f, 15.0f);
-			paddle.DrawLifes(bottomLeft, gfx);
+			lives.Draw(gfx);
+		}
+		else if (gameState == Reset)
+		{
+			SpriteCodex::DrawReady(Graphics::GetScreenRect().GetCenter(), gfx);
 		}
 
 		walls.Draw(gfx);

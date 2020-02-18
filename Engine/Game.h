@@ -28,12 +28,14 @@
 #include "Brick.h"
 #include "Paddle.h"
 #include "Walls.h"
+#include "LifeCounter.h"
 
 enum GameState 
 {
 	Starting,
 	Running,
-	GameOver
+	GameOver,
+	Reset
 };
 
 class Game
@@ -65,7 +67,8 @@ private:
 							brickHeight = 22.0f,
 							wallThickness = 12.0f,
 							fieldWidth = float(nBricksAcross) * brickWidth,
-							fieldHeight = float(Graphics::ScreenHeight) - wallThickness * 2.0f;
+							fieldHeight = float(Graphics::ScreenHeight) - wallThickness * 2.0f,
+							cooldownTime = 1.6f;
 	
 	static constexpr Color wallColor = { 20,60,200 };
 
@@ -74,5 +77,7 @@ private:
 	Brick bricks[nBricks];
 	Paddle paddle;
 	GameState gameState = Starting;
+	LifeCounter lives;
+	float resetTime = 0.0f;
 	/********************************/
 };

@@ -9,7 +9,6 @@ class Ball
 public:
 	Ball(const Vector2 &initialPosition, Vector2 &dir_in);
 	~Ball() = default;
-
 	void Draw(Graphics &gfx) const;
 	void Update(float deltaTime);
 	CollisionResult DoWallCollision(const RectF& walls);
@@ -19,6 +18,7 @@ public:
 	Vector2 GetVelocity() const;
 	Vector2 GetPosition() const;
 	void SetDirection(const Vector2 &dir);
+	void SetPosition(const Vector2 &pos);
 private:
 	static constexpr float radius = 0.7f;
 	float speed = 400.0f;
