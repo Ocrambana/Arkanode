@@ -29,6 +29,13 @@
 #include "Paddle.h"
 #include "Walls.h"
 
+enum GameState 
+{
+	Starting,
+	Running,
+	GameOver
+};
+
 class Game
 {
 public:
@@ -42,7 +49,6 @@ private:
 	void DoBricksCollision();
 	/********************************/
 	/*  User Functions              */
-	void DrawWalls();
 	/********************************/
 private:
 	MainWindow& wnd;
@@ -67,6 +73,6 @@ private:
 	Walls walls;
 	Brick bricks[nBricks];
 	Paddle paddle;
-	bool isGameOver = false;
+	GameState gameState = Starting;
 	/********************************/
 };

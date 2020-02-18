@@ -21,18 +21,19 @@
 #include "MainWindow.h"
 #include "Game.h"
 #include "Vector2.h"
+#include "SpriteCodex.h"
 #include <algorithm>
 
 Game::Game( MainWindow& wnd )
 	:
 	wnd( wnd ),
 	gfx( wnd ),
-	ball(Vector2(300.0f, 300.0f), Vector2(-1.0f, -1.0f)),
+	ball(Graphics::GetScreenRect().GetCenter(), Vector2(-0.5f, -1.0f)),
 	walls(RectF::FromCenter(Graphics::GetScreenRect().GetCenter(), fieldWidth / 2.0f, fieldHeight / 2.0f),
 		wallThickness, wallColor),
 	paddle(Vector2(400.0f,560.0f),30.0f,5.0f, 3)
 {
-	const Color colors[4] = {Colors::Red, Colors::Green, Colors::Cyan, Colors::Yellow};
+	const Color colors[4] = { {230,0,0},{ 0,230,0 },{ 0,0,230 },{ 0,230,230 } };
 	const Vector2 topLeft(walls.GetInnerBounds().left, walls.GetInnerBounds().top + 40.0f);
 	
 	for (int j{ 0 }; j < nBricksDown; j++)
@@ -65,11 +66,14 @@ void Game::Go()
 
 void Game::UpdateModel(float deltaTime)
 {
-	if (isGameOver)
+	if (gameState == GameOver)
 	{
-
+		if (wnd.kbd.KeyIsPressed(VK_RETURN) || wnd.kbd.KeyIsPressed(VK_CONTROL))
+		{
+			gameState = Running;
+		}
 	}
-	else
+	else if (gameState == Running)
 	{
 		ball.Update(deltaTime);
 		CollisionResult res = ball.DoWallCollision(walls.GetInnerBounds());
@@ -82,7 +86,10 @@ void Game::UpdateModel(float deltaTime)
 		if (res == bottom)
 		{
 			paddle.LoseLife();
-			isGameOver = paddle.IsGameOver();
+			if (paddle.hasFinishedLifes())
+			{
+				gameState = GameOver;
+			}
 		}
 
 		DoBricksCollision();
@@ -90,6 +97,13 @@ void Game::UpdateModel(float deltaTime)
 		paddle.Update(deltaTime, wnd.kbd);
 		paddle.DoWallCollision(walls.GetInnerBounds());
 		paddle.DoBallCollision(ball);
+	}
+	else if (gameState == Starting)
+	{
+		if (wnd.kbd.KeyIsPressed(VK_RETURN))
+		{
+			gameState = Running;
+		}
 	}
 }
 
@@ -128,37 +142,27 @@ void Game::DoBricksCollision()
 	}
 }
 
-void Game::DrawWalls()
-{
-	const RectF wallsRect = walls.GetInnerBounds(),
-			border = wallsRect.GetExpanded(static_cast<float>(wallsBorder));
-
-	for (int j = static_cast<int>(border.top); j <= border.bottom; j++)
-		for (int i = static_cast<int>(border.left); i <= border.right; i++)
-		{
-			const bool condition = (i < wallsRect.left || i > wallsRect.right || j > wallsRect.bottom || j < wallsRect.top);
-
-			if (condition)
-			{
-				gfx.PutPixel(i, j, Colors::White);
-			}
-		}
-}
-
 void Game::ComposeFrame()
 {
-	if (isGameOver)
+	if (gameState == Starting)
 	{
-
+		SpriteCodex::DrawTitle(Graphics::GetScreenRect().GetCenter() ,gfx);
 	}
 	else
 	{
-		ball.Draw(gfx);
-		paddle.Draw(gfx);
-		const Vector2 bottomLeft(5.0f, 15.0f);
-		paddle.DrawLifes(bottomLeft, gfx);
-	}
+		if (gameState == GameOver)
+		{
+			SpriteCodex::DrawGameOver(Graphics::GetScreenRect().GetCenter() ,gfx);
+		}
+		else if(gameState == Running)
+		{
+			ball.Draw(gfx);
+			paddle.Draw(gfx);
+			const Vector2 bottomLeft(5.0f, 15.0f);
+			paddle.DrawLifes(bottomLeft, gfx);
+		}
 
-	DrawWalls();
-	std::for_each(std::begin(bricks), std::end(bricks), [this](Brick &b) {b.Draw(this->gfx); });
+		walls.Draw(gfx);
+		std::for_each(std::begin(bricks), std::end(bricks), [this](Brick &b) {b.Draw(this->gfx); });
+	}
 }
