@@ -240,6 +240,55 @@ Graphics::Graphics( HWNDKey& key )
 		_aligned_malloc( sizeof( Color ) * Graphics::ScreenWidth * Graphics::ScreenHeight,16u ) );
 }
 
+void Graphics::DrawIsoRightTriUL(int x, int y, int size, Color c)
+{
+	for (int j{ y }; j < y + size; j++)
+	{
+		const int current_line = j - y;
+		for (int i{ x }; i < x + size - current_line; i++)
+		{
+			PutPixel(i, j, c);
+		}
+	}
+}
+
+void Graphics::DrawIsoRightTriUR(int x, int y, int size, Color c)
+{
+	for (int j{ y }; j < y + size; j++)
+	{
+		const int current_line = j - y;
+		for (int i{ x + current_line }; i < x + size; i++)
+		{
+			PutPixel(i, j, c);
+		}
+	}
+
+}
+
+void Graphics::DrawIsoRightTriBL(int x, int y, int size, Color c)
+{
+	for (int j{ y }; j < y + size; j++)
+	{
+		const int current_line = j - y;
+		for (int i{ x }; i < x + current_line; i++)
+		{
+			PutPixel(i, j, c);
+		}
+	}
+}
+
+void Graphics::DrawIsoRightTriBR(int x, int y, int size, Color c)
+{
+	for (int j{ y }; j < y + size; j++)
+	{
+		const int current_line = j - y;
+		for (int i{ x + size - current_line }; i < x + size; i++)
+		{
+			PutPixel(i, j, c);
+		}
+	}
+}
+
 Graphics::~Graphics()
 {
 	// free sysbuffer memory (aligned free)
